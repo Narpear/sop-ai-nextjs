@@ -1,9 +1,9 @@
-import LoginForm from "@/components/LoginForm";
+import Profile from "@/components/Profile";
 
 export default function Home() {
   return (
     <main>
-      <LoginForm/>
+      <Profile/>
     </main>
   );
 }
