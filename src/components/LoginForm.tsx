@@ -14,7 +14,7 @@ export default function LoginForm() {
 
     const router = useRouter();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
@@ -22,7 +22,7 @@ export default function LoginForm() {
                 email, password, redirect: false,
             });
 
-            if (res.error) {
+            if (res?.error) {
                 setError("Invalid Credentials");
                 return;
             }
