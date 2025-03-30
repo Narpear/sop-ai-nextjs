@@ -6,9 +6,12 @@ import { connectMongoDB } from "@/app/lib/mongodb";
 
 export async function GET(
   req: NextRequest, 
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
+
     await connectMongoDB();
     const session = await getServerSession(authOptions);
     
@@ -16,7 +19,7 @@ export async function GET(
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
     }
     
-    const user = await User.findOne({ email: session.user.email, "colleges._id": params.id }, { "colleges.$": 1 });
+    const user = await User.findOne({ email: session.user.email, "colleges._id": id }, { "colleges.$": 1 });
     if (!user) {
       return NextResponse.json({ error: "College not found" }, { status: 404 });
     }
