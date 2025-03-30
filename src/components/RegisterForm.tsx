@@ -54,7 +54,7 @@ export default function RegisterForm() {
             if (res.ok) {
                 const form = e.target as HTMLFormElement;
                 form.reset();
-                router.replace("/dashboard");
+                router.replace("/tell-us-about-you");
             } else {
                 console.log("User registration failed.");
             }
