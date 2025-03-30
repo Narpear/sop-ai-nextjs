@@ -1,5 +1,16 @@
 import mongoose, { models, Schema } from "mongoose";
 
+const questionSchema = new mongoose.Schema({
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
+});
+
+const collegeSchema = new mongoose.Schema({
+    collegeName: { type: String },
+    application_status: { type: Object},
+    questions: [questionSchema], // Array of question objects
+});
+
 const userSchema = new mongoose.Schema({
     fname: { type: String, required: true },
     lname: { type: String, required: true },
@@ -29,6 +40,7 @@ const userSchema = new mongoose.Schema({
         goodFit: { type: String },
         additional: { type: String },
     },
+    colleges: [collegeSchema],
 }, { timestamps: true });
 
 // Log when a user is saved
