@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import marbleImage from "./profile_marble.jpg";
 import Link from "next/link";
 import React from "react";
 import { signOut } from "next-auth/react";
+import marbleImage from "./profile_marble.jpg";
 
 const Button = React.forwardRef(({ className, ...props }, ref) => (
   <button
@@ -27,7 +26,6 @@ const Input = React.forwardRef(({ className, type = "text", ...props }, ref) => 
 Input.displayName = "Input";
 
 export default function ProfilePage() {
-  // const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [editingField, setEditingField] = useState(null);
   const [updatedValue, setUpdatedValue] = useState("");
