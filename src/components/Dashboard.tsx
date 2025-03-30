@@ -122,7 +122,7 @@ export default function Dashboard() {
             <p style={{ marginBottom: '5px' }}>
               This action cannot be undone, and all of the data associated with your SOP for this college will be lost.
             </p>
-            <p style={{ marginBottom: '10px', fontSize: '0.9rem' }}>Type "I want to delete this college" to confirm:</p>
+            <p style={{ marginBottom: '10px', fontSize: '0.9rem' }}>Type &quot;I want to delete this college&quot; to confirm:</p>
             <Input
               value={deleteConfirmation.confirmText}
               onChange={handleConfirmTextChange}

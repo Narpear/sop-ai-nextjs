@@ -27,7 +27,7 @@ const Input = React.forwardRef(({ className, type = "text", ...props }, ref) => 
 Input.displayName = "Input";
 
 export default function ProfilePage() {
-  const router = useRouter();
+  // const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [editingField, setEditingField] = useState(null);
   const [updatedValue, setUpdatedValue] = useState("");

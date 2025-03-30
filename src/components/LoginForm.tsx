@@ -77,7 +77,7 @@ export default function LoginForm() {
                         )}
 
                         <Link href={'/register'} className="underline font-medium text-center mt-3">
-                            Don't have an account? <u>Get started!</u>
+                            Don&apos;t have an account? <u>Get started!</u>
                         </Link>
                     </form>
                 </div>
