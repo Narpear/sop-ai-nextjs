@@ -1,18 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options"; // Ensure this path is correct
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import User from "@/models/user";
 import { connectMongoDB } from "@/app/lib/mongodb";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params; // Now 'params' is directly extracted
-
+export async function GET(req: NextRequest) {
   try {
     await connectMongoDB();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    }
+
+    const url = new URL(req.url);
+    const id = url.pathname.split("/").pop(); // Extracts ID from the URL
+
+    if (!id) {
+      return NextResponse.json({ error: "Invalid college ID" }, { status: 400 });
     }
 
     const user = await User.findOne(
@@ -35,15 +40,20 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params; // Now 'params' is directly extracted
-
+export async function POST(req: NextRequest) {
   try {
     await connectMongoDB();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    }
+
+    const url = new URL(req.url);
+    const id = url.pathname.split("/").pop();
+
+    if (!id) {
+      return NextResponse.json({ error: "Invalid college ID" }, { status: 400 });
     }
 
     const { question } = await req.json();
@@ -70,15 +80,20 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params; // Now 'params' is directly extracted
-
+export async function PUT(req: NextRequest) {
   try {
     await connectMongoDB();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    }
+
+    const url = new URL(req.url);
+    const id = url.pathname.split("/").pop();
+
+    if (!id) {
+      return NextResponse.json({ error: "Invalid college ID" }, { status: 400 });
     }
 
     const { question, answer } = await req.json();
