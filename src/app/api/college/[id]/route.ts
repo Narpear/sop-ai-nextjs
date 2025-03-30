@@ -5,6 +5,8 @@ import User from "@/models/user";
 import { connectMongoDB } from "@/app/lib/mongodb";
 
 export async function GET(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params; // Destructure params inside the function
+
   try {
     await connectMongoDB();
     const session = await getServerSession(authOptions);
@@ -14,7 +16,7 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
     }
 
     const user = await User.findOne(
-      { email: session.user.email, "colleges._id": context.params.id },
+      { email: session.user.email, "colleges._id": id },
       { "colleges.$": 1 }
     );
 
@@ -34,6 +36,8 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
 }
 
 export async function POST(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params; // Destructure params inside the function
+
   try {
     await connectMongoDB();
     const session = await getServerSession(authOptions);
@@ -48,7 +52,7 @@ export async function POST(req: NextRequest, context: { params: { id: string } }
     }
 
     const user = await User.findOneAndUpdate(
-      { email: session.user.email, "colleges._id": context.params.id },
+      { email: session.user.email, "colleges._id": id },
       { $push: { "colleges.$.questions": { question, answer: "" } } },
       { new: true }
     );
@@ -57,7 +61,7 @@ export async function POST(req: NextRequest, context: { params: { id: string } }
       return NextResponse.json({ error: "College not found" }, { status: 404 });
     }
 
-    const updatedCollege = user.colleges.find(c => c._id.toString() === context.params.id);
+    const updatedCollege = user.colleges.find(c => c._id.toString() === id);
     return NextResponse.json({ questions: updatedCollege?.questions || [] }, { status: 200 });
 
   } catch (error) {
@@ -67,6 +71,8 @@ export async function POST(req: NextRequest, context: { params: { id: string } }
 }
 
 export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params; // Destructure params inside the function
+
   try {
     await connectMongoDB();
     const session = await getServerSession(authOptions);
@@ -81,7 +87,7 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
     }
 
     const user = await User.findOneAndUpdate(
-      { email: session.user.email, "colleges._id": context.params.id, "colleges.questions.question": question },
+      { email: session.user.email, "colleges._id": id, "colleges.questions.question": question },
       { $set: { "colleges.$.questions.$[q].answer": answer } },
       { new: true, arrayFilters: [{ "q.question": question }] }
     );
