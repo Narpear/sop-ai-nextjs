@@ -105,34 +105,47 @@ export default function Dashboard() {
 
       <main className="relative z-10 flex-1 container mx-auto mt-6 sm:mt-8 px-4 pb-12">
         {deleteConfirmation.show && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Confirm Deletion</h3>
-              <p className="mb-4 text-gray-600">
-                This action cannot be undone, and all of the data associated with your SOP for this college will be lost.
-              </p>
-              <p className="mb-2 text-sm text-gray-600">Type "I want to delete this college" to confirm:</p>
-              <Input
-                value={deleteConfirmation.confirmText}
-                onChange={handleConfirmTextChange}
-                className="mb-4"
-                placeholder="I want to delete this college"
-              />
-              <div className="flex justify-end gap-3">
-                <Button 
-                  onClick={cancelDelete} 
-                  className="bg-gray-200 text-gray-800 hover:bg-gray-300 px-4 py-2"
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={confirmDelete} 
-                  className="bg-red-500 text-white hover:bg-red-600 px-4 py-2"
-                  disabled={deleteConfirmation.confirmText !== "I want to delete this college"}
-                >
-                  Delete
-                </Button>
-              </div>
+          <div 
+            className={`fixed left-1/2 z-50 shadow-md transition-transform duration-500 ease-in-out transform ${deleteConfirmation.show ? 'translate-y-0' : '-translate-y-full'}`} 
+            style={{ 
+              backgroundColor: '#f8d7da', 
+              color: '#721c24', 
+              padding: '15px 20px', 
+              borderRadius: '8px', 
+              width: '300px', 
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' 
+            }} 
+          >
+            <h3 style={{ fontSize: '1.2rem', marginBottom: '5px' }}>Confirm Deletion</h3>
+            <p style={{ marginBottom: '5px' }}>
+              This action cannot be undone, and all of the data associated with your SOP for this college will be lost.
+            </p>
+            <p style={{ marginBottom: '10px', fontSize: '0.9rem' }}>Type "I want to delete this college" to confirm:</p>
+            <Input
+              value={deleteConfirmation.confirmText}
+              onChange={handleConfirmTextChange}
+              className="mb-4"
+              placeholder="I want to delete this college"
+              style={{ width: '100%', marginBottom: '10px' }}
+            />
+            <div className="flex justify-end gap-2">
+              <Button 
+                onClick={cancelDelete} 
+                className="bg-gray-200 text-gray-800 hover:bg-gray-300 px-3 py-1"
+                style={{ borderRadius: '4px' }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={confirmDelete} 
+                className="bg-red-500 text-white hover:bg-red-600 px-3 py-1"
+                disabled={deleteConfirmation.confirmText !== "I want to delete this college"}
+                style={{ borderRadius: '4px' }}
+              >
+                Delete
+              </Button>
             </div>
           </div>
         )}
@@ -165,7 +178,7 @@ export default function Dashboard() {
               </div>
               <Button 
                 onClick={addCollege} 
-                className="w-full bg-[#8d77ff] hover:bg-[#7a66e6] text-white" 
+                className="px-4 py-2 bg-[#8d77ff] text-white rounded-full shadow-sm hover:bg-[#7a66e6] transition-colors text-sm w-full"
                 disabled={!newCollegeName.trim()}
               >
                 + Add College
