@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import User from "@/models/user";
 import { connectMongoDB } from "@/app/lib/mongodb";
 
-export async function GET(req, { params: { id } }) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     await connectMongoDB();
     const session = await getServerSession(authOptions);
@@ -13,7 +13,7 @@ export async function GET(req, { params: { id } }) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
     }
     
-    const user = await User.findOne({ email: session.user.email, "colleges._id": id }, { "colleges.$": 1 });
+    const user = await User.findOne({ email: session.user.email, "colleges._id": params.id }, { "colleges.$": 1 });
     if (!user) {
       return NextResponse.json({ error: "College not found" }, { status: 404 });
     }
