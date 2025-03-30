@@ -4,8 +4,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options"; // Ensu
 import User from "@/models/user";
 import { connectMongoDB } from "@/app/lib/mongodb";
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params; // Destructure params inside the function
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params; // Now 'params' is directly extracted
 
   try {
     await connectMongoDB();
@@ -35,8 +35,8 @@ export async function GET(req: NextRequest, context: { params: { id: string } })
   }
 }
 
-export async function POST(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params; // Destructure params inside the function
+export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params; // Now 'params' is directly extracted
 
   try {
     await connectMongoDB();
@@ -70,8 +70,8 @@ export async function POST(req: NextRequest, context: { params: { id: string } }
   }
 }
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params; // Destructure params inside the function
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params; // Now 'params' is directly extracted
 
   try {
     await connectMongoDB();
