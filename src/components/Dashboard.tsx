@@ -39,10 +39,29 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
+// Define types for college data to match API
+interface College {
+  _id?: string;
+  collegeName: string;
+  application_status?: Record<string, unknown>;
+  questions?: { question: string; answer: string }[];
+}
+
+// Define type for delete confirmation state
+interface DeleteConfirmation {
+  show: boolean;
+  collegeId: string | null;
+  confirmText: string;
+}
+
 export default function Dashboard() {
-  const [colleges, setColleges] = useState([]);
+  const [colleges, setColleges] = useState<College[]>([]);
   const [newCollegeName, setNewCollegeName] = useState("");
-  const [deleteConfirmation, setDeleteConfirmation] = useState({ show: false, collegeId: null, confirmText: "" });
+  const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmation>({ 
+    show: false, 
+    collegeId: null, 
+    confirmText: "" 
+  });
 
   useEffect(() => {
     const fetchColleges = async () => {
@@ -67,7 +86,7 @@ export default function Dashboard() {
     }
   };
 
-  const initiateDelete = (collegeId) => {
+  const initiateDelete = (collegeId: string) => {
     setDeleteConfirmation({
       show: true,
       collegeId,
@@ -75,7 +94,7 @@ export default function Dashboard() {
     });
   };
 
-  const handleConfirmTextChange = (e) => {
+  const handleConfirmTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDeleteConfirmation({
       ...deleteConfirmation,
       confirmText: e.target.value
@@ -88,6 +107,8 @@ export default function Dashboard() {
 
   const confirmDelete = async () => {
     const { collegeId } = deleteConfirmation;
+    if (!collegeId) return;
+    
     const res = await fetch("/api/colleges", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -172,7 +193,7 @@ export default function Dashboard() {
                 <Link href={`/college/${college._id}`} className="px-4 py-2 bg-[#8d77ff] text-white rounded-full shadow-sm hover:bg-[#7a66e6] transition-colors text-sm">
                   View Details
                 </Link>
-                <button onClick={() => initiateDelete(college._id)} className="text-red-500 hover:text-red-700 text-sm">
+                <button onClick={() => initiateDelete(college._id as string)} className="text-red-500 hover:text-red-700 text-sm">
                   ✖ Delete
                 </button>
               </div>
