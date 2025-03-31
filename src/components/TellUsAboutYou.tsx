@@ -3,24 +3,58 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import marbleImage from "./tell_us_about_you_marble.jpg";
+import React from "react";
 
-const Button = ({ className = "", ...props }) => (
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  className?: string;
+}
+
+const Button: React.FC<ButtonProps> = ({ className = "", ...props }) => (
     <button
         className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 px-8 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 ${className}`}
         {...props}
     />
 );
 
-const Textarea = ({ className = "", ...props }) => (
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  className?: string;
+}
+
+const Textarea: React.FC<TextareaProps> = ({ className = "", ...props }) => (
     <textarea
         className={`flex min-h-[60px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base shadow-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm ${className}`}
         {...props}
     />
 );
 
+// Define the shape of our form data
+interface FormData {
+  location: string;
+  education: string;
+  achievements: string;
+  subjects: string;
+  futureGoals: string;
+  impact: string;
+  projects: string;
+  workExperience: string;
+  hobbies: string;
+  leadership: string;
+  competitions: string;
+  challenges: string;
+  values: string;
+  uniqueTraits: string;
+  family: string;
+  familyInfluence: string;
+  inspiration: string;
+  traditions: string;
+  colleges: string;
+  goodFit: string;
+  additional: string;
+}
+
 export default function TellUsAboutYou() {
     const router = useRouter();
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         location: "",
         education: "",
         achievements: "",
@@ -45,7 +79,7 @@ export default function TellUsAboutYou() {
     });
     const [error, setError] = useState("");
 
-    const questions = {
+    const questions: Record<keyof FormData, string> = {
         location: "Where are you from?",
         education: "What's your educational background?",
         achievements: "Any cool academic achievements you're proud of?",
@@ -69,14 +103,14 @@ export default function TellUsAboutYou() {
         additional: "Anything else you'd like to share? (Random fun facts totally welcome!)",
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setFormData((prev) => ({
             ...prev,
             [e.target.name]: e.target.value
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             console.log("Component: Sending data to API:", formData);
@@ -122,9 +156,14 @@ export default function TellUsAboutYou() {
                     {Object.entries(formData).map(([key, value]) => (
                         <div key={key}>
                             <label htmlFor={key} className="text-lg font-semibold text-gray-700 mb-2 block">
-                                {questions[key]}
+                                {questions[key as keyof FormData]}
                             </label>
-                            <Textarea id={key} name={key} value={value} onChange={handleChange} />
+                            <Textarea 
+                                id={key} 
+                                name={key} 
+                                value={value} 
+                                onChange={handleChange} 
+                            />
                         </div>
                     ))}
                     <div className="text-center pt-4">
