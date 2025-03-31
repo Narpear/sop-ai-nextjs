@@ -6,28 +6,54 @@ import React from "react";
 import { signOut } from "next-auth/react";
 import marbleImage from "./profile_marble.jpg";
 
-const Button = React.forwardRef(({ className, ...props }, ref) => (
-  <button
-    ref={ref}
-    className={`inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 ${className}`}
-    {...props}
-  />
-));
+// Define proper types for the Button component
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  className?: string;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className = "", ...props }, ref) => (
+    <button
+      ref={ref}
+      className={`inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 ${className}`}
+      {...props}
+    />
+  )
+);
 Button.displayName = "Button";
 
-const Input = React.forwardRef(({ className, type = "text", ...props }, ref) => (
-  <input
-    ref={ref}
-    type={type}
-    className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-    {...props}
-  />
-));
+// Define proper types for the Input component
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: string;
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className = "", type = "text", ...props }, ref) => (
+    <input
+      ref={ref}
+      type={type}
+      className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      {...props}
+    />
+  )
+);
 Input.displayName = "Input";
 
+// Define types for user data
+interface UserDetails {
+  [key: string]: string;
+}
+
+interface UserData {
+  fname: string;
+  lname: string;
+  email: string;
+  details: UserDetails;
+}
+
 export default function ProfilePage() {
-  const [userData, setUserData] = useState(null);
-  const [editingField, setEditingField] = useState(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [editingField, setEditingField] = useState<string | null>(null);
   const [updatedValue, setUpdatedValue] = useState("");
   const [error, setError] = useState("");
 
@@ -45,29 +71,34 @@ export default function ProfilePage() {
     fetchUserData();
   }, []);
 
-  const handleEdit = (field) => {
+  const handleEdit = (field: string) => {
     setEditingField(field);
-    setUpdatedValue(userData.details[field]);
+    if (userData?.details) {
+      setUpdatedValue(userData.details[field] || "");
+    }
   };
 
-  const handleSave = async (field) => {
+  const handleSave = async (field: string) => {
     const res = await fetch("/api/userProfile", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ field, value: updatedValue }),
     });
     if (res.ok) {
-      setUserData((prev) => ({
-        ...prev,
-        details: { ...prev.details, [field]: updatedValue },
-      }));
+      setUserData((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          details: { ...prev.details, [field]: updatedValue },
+        };
+      });
       setEditingField(null);
     } else {
       setError("Failed to update user details.");
     }
   };
 
-  const questions = {
+  const questions: Record<string, string> = {
     location: "Where are you from?",
     education: "What's your educational background?",
     achievements: "Any cool academic achievements you're proud of?",

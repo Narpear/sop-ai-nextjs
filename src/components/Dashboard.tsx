@@ -6,23 +6,37 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Button = React.forwardRef(({ className, ...props }, ref) => (
-  <button
-    ref={ref}
-    className={`inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 ${className}`}
-    {...props}
-  />
-));
+// Define proper types for the Button component
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  className?: string;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className = "", ...props }, ref) => (
+    <button
+      ref={ref}
+      className={`inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 ${className}`}
+      {...props}
+    />
+  )
+);
 Button.displayName = "Button";
 
-const Input = React.forwardRef(({ className, type = "text", ...props }, ref) => (
-  <input
-    ref={ref}
-    type={type}
-    className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-    {...props}
-  />
-));
+// Define proper types for the Input component
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: string;
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className = "", type = "text", ...props }, ref) => (
+    <input
+      ref={ref}
+      type={type}
+      className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      {...props}
+    />
+  )
+);
 Input.displayName = "Input";
 
 export default function Dashboard() {
