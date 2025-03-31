@@ -4,6 +4,13 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import User from "@/models/user";
 import { connectMongoDB } from "@/app/lib/mongodb";
 
+// Define the College type
+interface College {
+  _id: string;
+  collegeName: string;
+  questions: { question: string; answer: string }[];
+}
+
 export async function GET(req: NextRequest) {
   try {
     await connectMongoDB();
@@ -111,7 +118,9 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "College or question not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "Answer updated successfully" }, { status: 200 });
+    // Specify the type for the colleges array
+    const updatedCollege = user.colleges.find((c: College) => c._id.toString() === id);
+    return NextResponse.json({ questions: updatedCollege?.questions || [] }, { status: 200 });
 
   } catch (error) {
     console.error("Error updating answer:", error);
