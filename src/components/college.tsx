@@ -6,7 +6,7 @@ import React from "react";
 import Link from "next/link";
 import marbleImage from "./dashboard_marble.jpg";
 
-// Define proper types for the Button component
+// Define the props interface for Button
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
 }
@@ -22,7 +22,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-// Define proper types for the Input component
+// Define the props interface for Input
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
 }
@@ -39,12 +39,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
+// Define interface for question
+interface Question {
+  question: string;
+}
+
 export default function College() {
   const { id } = useParams();
-  const [questions, setQuestions] = useState([]);
-  const [collegeName, setCollegeName] = useState("");
-  const [newQuestion, setNewQuestion] = useState("");
-  const [answers, setAnswers] = useState({});
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [collegeName, setCollegeName] = useState<string>("");
+  const [newQuestion, setNewQuestion] = useState<string>("");
+  const [answers, setAnswers] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -72,7 +77,7 @@ export default function College() {
     }
   };
 
-  const updateAnswer = async (question, answer) => {
+  const updateAnswer = async (question: string, answer: string) => {
     const res = await fetch(`/api/college/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
