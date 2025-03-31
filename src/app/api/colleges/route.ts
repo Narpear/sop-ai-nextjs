@@ -6,7 +6,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 
 // Define interface for the College type
 interface College {
-  _id: string;
+  _id?: string; // Make _id optional since MongoDB generates it automatically
   collegeName: string;
   application_status: Record<string, unknown>;
   questions: { question: string; answer: string }[];
@@ -76,7 +76,12 @@ export async function POST(req: NextRequest) {
     }
 
     console.log("Adding new college...");
-    user.colleges.push({ collegeName, application_status: {}, questions: [] } as College);
+    // No need for type assertion here since the object structure matches the College interface
+    user.colleges.push({ 
+      collegeName, 
+      application_status: {}, 
+      questions: [] 
+    });
     await user.save();
 
     console.log("College added successfully");
@@ -116,7 +121,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     console.log("Removing college...");
-    user.colleges = user.colleges.filter((college: College) => college._id.toString() !== collegeId);
+    user.colleges = user.colleges.filter((college: College) => college._id?.toString() !== collegeId);
     await user.save();
 
     console.log("College deleted successfully");
