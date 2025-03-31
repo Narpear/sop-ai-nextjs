@@ -11,6 +11,12 @@ interface College {
   questions: { question: string; answer: string }[];
 }
 
+// Define the User type
+interface UserType {
+  email: string;
+  colleges: College[];
+}
+
 export async function GET(req: NextRequest) {
   try {
     await connectMongoDB();
@@ -112,7 +118,7 @@ export async function PUT(req: NextRequest) {
       { email: session.user.email, "colleges._id": id, "colleges.questions.question": question },
       { $set: { "colleges.$.questions.$[q].answer": answer } },
       { new: true, arrayFilters: [{ "q.question": question }] }
-    );
+    ) as UserType; // Cast the result to UserType
 
     if (!user) {
       return NextResponse.json({ error: "College or question not found" }, { status: 404 });
