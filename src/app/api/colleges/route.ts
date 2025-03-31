@@ -1,8 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import User from "@/models/user";
 import { connectMongoDB } from "@/app/lib/mongodb";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
+
+// Define interface for the College type
+interface College {
+  _id: string;
+  collegeName: string;
+  application_status: Record<string, unknown>;
+  questions: { question: string; answer: string }[];
+}
+
+// Define interface for the User type
+interface UserType {
+  email: string;
+  colleges: College[];
+  save: () => Promise<void>;
+}
 
 export async function GET() {
   try {
@@ -17,7 +32,7 @@ export async function GET() {
     }
 
     console.log(`Fetching user with email: ${session.user.email}`);
-    const user = await User.findOne({ email: session.user.email }); // Fix: use findOne instead of findById
+    const user = await User.findOne({ email: session.user.email }) as UserType;
     if (!user) {
       console.error("User not found");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -27,11 +42,13 @@ export async function GET() {
     return NextResponse.json({ colleges: user.colleges }, { status: 200 });
   } catch (error) {
     console.error("Error in GET /api/colleges:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    // Handle the unknown error type properly
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   try {
     console.log("Connecting to MongoDB...");
     await connectMongoDB();
@@ -43,7 +60,8 @@ export async function POST(req) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
     }
 
-    const { collegeName } = await req.json();
+    const data = await req.json();
+    const { collegeName } = data as { collegeName: string };
     console.log(`Received college name: ${collegeName}`);
     if (!collegeName) {
       console.error("Missing college name");
@@ -51,25 +69,26 @@ export async function POST(req) {
     }
 
     console.log(`Fetching user with email: ${session.user.email}`);
-    const user = await User.findOne({ email: session.user.email });
+    const user = await User.findOne({ email: session.user.email }) as UserType;
     if (!user) {
       console.error("User not found");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     console.log("Adding new college...");
-    user.colleges.push({ collegeName, application_status: {}, questions: [] });
+    user.colleges.push({ collegeName, application_status: {}, questions: [] } as College);
     await user.save();
 
     console.log("College added successfully");
     return NextResponse.json({ message: "College added successfully", colleges: user.colleges }, { status: 201 });
   } catch (error) {
     console.error("Error in POST /api/colleges:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
-export async function DELETE(req) {
+export async function DELETE(req: NextRequest) {
   try {
     console.log("Connecting to MongoDB...");
     await connectMongoDB();
@@ -81,7 +100,8 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
     }
 
-    const { collegeId } = await req.json();
+    const data = await req.json();
+    const { collegeId } = data as { collegeId: string };
     console.log(`Received college ID: ${collegeId}`);
     if (!collegeId) {
       console.error("Missing college ID");
@@ -89,20 +109,21 @@ export async function DELETE(req) {
     }
 
     console.log(`Fetching user with email: ${session.user.email}`);
-    const user = await User.findOne({ email: session.user.email });
+    const user = await User.findOne({ email: session.user.email }) as UserType;
     if (!user) {
       console.error("User not found");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     console.log("Removing college...");
-    user.colleges = user.colleges.filter(college => college._id.toString() !== collegeId);
+    user.colleges = user.colleges.filter((college: College) => college._id.toString() !== collegeId);
     await user.save();
 
     console.log("College deleted successfully");
     return NextResponse.json({ message: "College deleted successfully", colleges: user.colleges }, { status: 200 });
   } catch (error) {
     console.error("Error in DELETE /api/colleges:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
