@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
     const user = await User.findOne(
       { email: session.user.email, "colleges._id": id },
       { "colleges.$": 1 }
-    );
+    ) as UserType; // Add type assertion here
 
     if (!user || user.colleges.length === 0) {
       return NextResponse.json({ error: "College not found" }, { status: 404 });
@@ -78,13 +78,13 @@ export async function POST(req: NextRequest) {
       { email: session.user.email, "colleges._id": id },
       { $push: { "colleges.$.questions": { question, answer: "" } } },
       { new: true }
-    );
+    ) as UserType; // Add type assertion here
 
     if (!user) {
       return NextResponse.json({ error: "College not found" }, { status: 404 });
     }
 
-    const updatedCollege = user.colleges.find(c => c._id.toString() === id);
+    const updatedCollege = user.colleges.find((c: College) => c._id.toString() === id);
     return NextResponse.json({ questions: updatedCollege?.questions || [] }, { status: 200 });
 
   } catch (error) {
@@ -124,7 +124,6 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "College or question not found" }, { status: 404 });
     }
 
-    // Specify the type for the colleges array
     const updatedCollege = user.colleges.find((c: College) => c._id.toString() === id);
     return NextResponse.json({ questions: updatedCollege?.questions || [] }, { status: 200 });
 
