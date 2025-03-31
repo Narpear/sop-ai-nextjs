@@ -1,4 +1,4 @@
-import College from "@/components/College";
+import College from "@/components/college";
 
 export default function Home() {
   return (
